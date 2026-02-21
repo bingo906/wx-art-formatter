@@ -25,6 +25,32 @@
         >
           {{ exporting === 'pdf' ? '⏳ 导出中...' : '📄 导出PDF' }}
         </button>
+        <div class="xhs-wrapper">
+          <button
+            class="export-btn xhs-btn"
+            @click="showXhsMenu = !showXhsMenu"
+            :disabled="!!exporting"
+            title="导出小红书图片"
+          >
+            {{ exporting === 'xhs' ? '⏳ 导出中...' : '📕 小红书' }}
+          </button>
+          <div v-if="showXhsMenu" class="xhs-menu">
+            <div class="xhs-menu-title">选择图片比例</div>
+            <button class="xhs-option" @click="handleExportXhs('3:4')">
+              <span class="xhs-ratio">3:4 竖图</span>
+              <span class="xhs-size">1080x1440</span>
+              <span class="xhs-tag">推荐</span>
+            </button>
+            <button class="xhs-option" @click="handleExportXhs('1:1')">
+              <span class="xhs-ratio">1:1 方图</span>
+              <span class="xhs-size">1080x1080</span>
+            </button>
+            <button class="xhs-option" @click="handleExportXhs('4:3')">
+              <span class="xhs-ratio">4:3 横图</span>
+              <span class="xhs-size">1080x810</span>
+            </button>
+          </div>
+        </div>
         <button class="copy-btn" @click="handleCopy">
           {{ copied ? '✅ 已复制' : '📋 一键复制' }}
         </button>
@@ -61,6 +87,32 @@
             >
               {{ exporting === 'pdf' ? '⏳...' : '📄 PDF' }}
             </button>
+            <div class="xhs-wrapper">
+              <button
+                class="fs-btn"
+                @click="showXhsMenuFs = !showXhsMenuFs"
+                :disabled="!!exporting"
+                title="导出小红书图片"
+              >
+                {{ exporting === 'xhs' ? '⏳...' : '📕 小红书' }}
+              </button>
+              <div v-if="showXhsMenuFs" class="xhs-menu">
+                <div class="xhs-menu-title">选择图片比例</div>
+                <button class="xhs-option" @click="handleExportXhs('3:4')">
+                  <span class="xhs-ratio">3:4 竖图</span>
+                  <span class="xhs-size">1080x1440</span>
+                  <span class="xhs-tag">推荐</span>
+                </button>
+                <button class="xhs-option" @click="handleExportXhs('1:1')">
+                  <span class="xhs-ratio">1:1 方图</span>
+                  <span class="xhs-size">1080x1080</span>
+                </button>
+                <button class="xhs-option" @click="handleExportXhs('4:3')">
+                  <span class="xhs-ratio">4:3 横图</span>
+                  <span class="xhs-size">1080x810</span>
+                </button>
+              </div>
+            </div>
             <button class="fs-copy-btn" @click="handleCopy">
               {{ copied ? '✅ 已复制' : '📋 复制' }}
             </button>
@@ -80,7 +132,8 @@
 import { ref } from 'vue'
 import { useEditorStore } from '../stores/editor'
 import { copyHtmlToClipboard } from '../core/clipboard'
-import { exportAsImage, exportAsPdf } from '../core/export'
+import { exportAsImage, exportAsPdf, exportForXiaohongshu } from '../core/export'
+import type { XhsRatio } from '../core/export'
 import PhoneFrame from './PhoneFrame.vue'
 
 const store = useEditorStore()
@@ -88,7 +141,9 @@ const isWide = ref(false)
 const showFullscreen = ref(false)
 const fsMode = ref<'phone' | 'wide'>('phone')
 const copied = ref(false)
-const exporting = ref<'image' | 'pdf' | null>(null)
+const exporting = ref<'image' | 'pdf' | 'xhs' | null>(null)
+const showXhsMenu = ref(false)
+const showXhsMenuFs = ref(false)
 
 function toggleWidth() {
   isWide.value = !isWide.value
@@ -131,6 +186,21 @@ async function handleExportPdf() {
       scale: 2,
       filename: 'wechat-article',
     })
+  } finally {
+    exporting.value = null
+  }
+}
+
+async function handleExportXhs(ratio: XhsRatio) {
+  showXhsMenu.value = false
+  showXhsMenuFs.value = false
+  if (exporting.value) return
+  if (!store.renderedHtml || store.renderedHtml.trim() === '') return
+  exporting.value = 'xhs'
+  try {
+    await exportForXiaohongshu({
+      html: store.renderedHtml,
+    }, ratio)
   } finally {
     exporting.value = null
   }
@@ -217,6 +287,81 @@ async function handleExportPdf() {
 .export-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* ===== 小红书比例选择菜单 ===== */
+.xhs-wrapper {
+  position: relative;
+}
+
+.xhs-btn {
+  border-color: #ff4757;
+  color: #ff4757;
+}
+
+.xhs-btn:hover:not(:disabled) {
+  background: #fff5f5;
+  border-color: #ff4757;
+}
+
+.xhs-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 6px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+  min-width: 200px;
+  padding: 8px 0;
+}
+
+.xhs-menu-title {
+  padding: 6px 14px;
+  font-size: 11px;
+  color: #999;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 4px;
+}
+
+.xhs-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+  transition: background 0.15s;
+  text-align: left;
+}
+
+.xhs-option:hover {
+  background: #fff5f5;
+}
+
+.xhs-ratio {
+  font-weight: 500;
+  min-width: 64px;
+}
+
+.xhs-size {
+  font-size: 11px;
+  color: #999;
+}
+
+.xhs-tag {
+  font-size: 10px;
+  background: #ff4757;
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 8px;
+  margin-left: auto;
 }
 
 .preview-body {

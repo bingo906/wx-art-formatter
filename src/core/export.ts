@@ -148,6 +148,82 @@ export async function exportAsImage(options: ExportOptions): Promise<boolean> {
 }
 
 /**
+ * 小红书图片比例类型
+ */
+export type XhsRatio = '3:4' | '1:1' | '4:3'
+
+const XHS_DIMENSIONS: Record<XhsRatio, { width: number; height: number }> = {
+  '3:4': { width: 1080, height: 1440 },
+  '1:1': { width: 1080, height: 1080 },
+  '4:3': { width: 1080, height: 810 },
+}
+
+/**
+ * 导出为小红书多张图片（按比例切割长图，逐张下载）
+ */
+export async function exportForXiaohongshu(
+  options: ExportOptions,
+  ratio: XhsRatio = '3:4',
+): Promise<boolean> {
+  try {
+    const dim = XHS_DIMENSIONS[ratio]
+    // 以 1080px 宽度、scale=1 渲染完整长图
+    const canvas = await renderToCanvas({
+      ...options,
+      width: dim.width,
+      scale: 1,
+    })
+
+    const canvasWidth = canvas.width
+    const canvasHeight = canvas.height
+    const pageHeight = dim.height
+    const totalPages = Math.ceil(canvasHeight / pageHeight)
+
+    for (let i = 0; i < totalPages; i++) {
+      const srcY = i * pageHeight
+      const sliceH = Math.min(pageHeight, canvasHeight - srcY)
+
+      // 创建固定尺寸的临时 canvas（不足部分留白）
+      const pageCanvas = document.createElement('canvas')
+      pageCanvas.width = dim.width
+      pageCanvas.height = dim.height
+      const ctx = pageCanvas.getContext('2d')!
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, dim.width, dim.height)
+      ctx.drawImage(
+        canvas,
+        0, srcY, canvasWidth, sliceH,
+        0, 0, dim.width, sliceH,
+      )
+
+      const blob = await new Promise<Blob | null>((resolve) => {
+        pageCanvas.toBlob(resolve, 'image/png', 1.0)
+      })
+      if (!blob) continue
+
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `xiaohongshu-${i + 1}.png`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      setTimeout(() => URL.revokeObjectURL(url), 1000)
+
+      // 间隔 200ms，避免浏览器拦截批量下载
+      if (i < totalPages - 1) {
+        await new Promise((r) => setTimeout(r, 200))
+      }
+    }
+
+    return true
+  } catch (err) {
+    console.error('Export Xiaohongshu images failed:', err)
+    return false
+  }
+}
+
+/**
  * 导出渲染后的 HTML 为 PDF 文档并下载
  */
 export async function exportAsPdf(options: ExportOptions): Promise<boolean> {
