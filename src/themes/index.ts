@@ -13,6 +13,7 @@ import { sunsetGlow } from './sunset-glow'
 import { chinaRed } from './china-red'
 import { chinaClassic } from './china-classic'
 import { japanClassic } from './japan-classic'
+import { koreaClassic } from './korea-classic'
 import { starryNight } from './starry-night'
 import { morandi } from './morandi'
 import { cyberpunk } from './cyberpunk'
@@ -26,6 +27,7 @@ export const themes: ThemeConfig[] = [
   techBlue,
   elegant,
   japanClassic,
+  koreaClassic,
   business,
   freshGreen,
   rosePink,
