@@ -11,6 +11,7 @@ import { gradientPurple } from './gradient-purple'
 import { letterPaper } from './letter-paper'
 import { sunsetGlow } from './sunset-glow'
 import { chinaRed } from './china-red'
+import { chinaClassic } from './china-classic'
 import { starryNight } from './starry-night'
 import { morandi } from './morandi'
 import { cyberpunk } from './cyberpunk'
@@ -33,6 +34,7 @@ export const themes: ThemeConfig[] = [
   letterPaper,
   sunsetGlow,
   chinaRed,
+  chinaClassic,
   morandi,
   mintForest,
   starryNight,
