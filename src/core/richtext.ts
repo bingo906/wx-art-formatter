@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'vue'
 import type { ThemeConfig } from '../themes/types'
 import { cssToString } from './markdown'
 
@@ -89,6 +90,6 @@ function applyStylesToNode(node: Element, theme: ThemeConfig): void {
   }
 }
 
-function applyStyle(element: HTMLElement, style: Record<string, any>): void {
+function applyStyle(element: HTMLElement, style: CSSProperties): void {
   element.setAttribute('style', cssToString(style))
 }

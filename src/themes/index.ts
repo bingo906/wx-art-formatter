@@ -12,6 +12,7 @@ import { letterPaper } from './letter-paper'
 import { sunsetGlow } from './sunset-glow'
 import { chinaRed } from './china-red'
 import { chinaClassic } from './china-classic'
+import { japanClassic } from './japan-classic'
 import { starryNight } from './starry-night'
 import { morandi } from './morandi'
 import { cyberpunk } from './cyberpunk'
@@ -24,6 +25,7 @@ export const themes: ThemeConfig[] = [
   minimal,
   techBlue,
   elegant,
+  japanClassic,
   business,
   freshGreen,
   rosePink,
