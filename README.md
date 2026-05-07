@@ -92,7 +92,7 @@ src/
 │   ├── claude-bg.ts        # Claude 带背景
 │   ├── letter-paper.ts     # 信纸风
 │   ├── sunset-glow.ts      # 日落晚霞
-│   ├── china-red.ts        # 中国红
+│   ├── china-red.ts        # 中国red
 │   ├── china-classic.ts    # 中国古典
 │   ├── japan-classic.ts    # 日本风
 │   ├── korea-classic.ts    # 韩国风
@@ -121,7 +121,7 @@ src/
 | 分类 | 模板 |
 |------|------|
 | 经典 | Claude、极简、科技蓝、文艺风、日本风、韩国风、泰国风、商务风、清新绿、玫瑰粉、渐变紫、暗色 |
-| 背景 | Claude 带背景、信纸风、日落晚霞、中国红、中国古典、莫兰迪、薄荷森林、星空夜 |
+| 背景 | Claude 带背景、信纸风、日落晚霞、中国red、中国古典、莫兰迪、薄荷森林、星空夜 |
 | 创意 | 赛博朋克 |
 
 ## 部署
