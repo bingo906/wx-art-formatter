@@ -3,8 +3,8 @@ import type { ThemeConfig } from './types'
 // 中国红：红色系，节庆大气，适合新年/党建/国风
 export const chinaRed: ThemeConfig = {
   id: 'china-red',
-  name: '中国红',
-  description: '大气喜庆的中国红风格，适合节日/国风文章',
+  name: '中国red',
+  description: '大气喜庆的中国red风格，适合节日/国风文章',
   primaryColor: '#cf1322',
   category: 'background' as const,
   wrapper: {
