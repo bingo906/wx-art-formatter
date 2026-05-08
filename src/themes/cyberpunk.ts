@@ -3,7 +3,7 @@ import type { ThemeConfig } from './types'
 // 赛博朋克：霓虹+暗色，适合科技/AI/编程/潮流类
 export const cyberpunk: ThemeConfig = {
   id: 'cyberpunk',
-  name: '赛博朋克',
+  name: 'Cyber',
   description: '霓虹灯光暗色调，适合科技/AI/编程/潮流类',
   primaryColor: '#00fff5',
   category: 'creative' as const,
